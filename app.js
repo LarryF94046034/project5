@@ -13,6 +13,52 @@ snake[1] = { x: 60, y: 0 };
 snake[2] = { x: 40, y: 0 };
 snake[3] = { x: 20, y: 0 };
 
+//fruit
+class Fruit {
+  constructor() {
+    //Math.random() 0~<1   //Xcolumn 0~<16    //Math.floor() 0~15整數  //Xunit  0Xunit~15Xunit
+    this.x = Math.floor(Math.random() * column) * unit;
+    this.y = Math.floor(Math.random() * row) * unit;
+  }
+
+  drawFruit() {
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(this.x, this.y, unit, unit);
+  }
+
+  pickALocation() {
+    let overlapping = false;
+    let new_X;
+    let new_Y;
+
+    function checkOverlap(new_X, new_Y) {
+      overlapping = false;
+      for (let i = 0; i < snake.length; i++) {
+        //console.log snake[i]);
+        if (new_X == snake[i].x && new_Y == -snake[i].y) {
+          overlapping = true;
+          return;
+        } else {
+          overlapping = false;
+        }
+      }
+    }
+
+    new_X = Math.floor(Math.random() * column) * unit;
+    new_Y = Math.floor(Math.random() * row) * unit;
+
+    while (overlapping) {
+      checkOverlap(new_X, new_Y);
+    }
+
+    this.x = new_X;
+    this.y = new_Y;
+  }
+}
+
+//生成fruit
+let myFruit = new Fruit();
+
 window.addEventListener("keydown", changeDirection);
 let direction = "Right";
 function changeDirection(e) {
@@ -38,6 +84,10 @@ function draw() {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  //更新水果
+  myFruit.drawFruit();
+
+  //更新蛇
   for (let i = 0; i < snake.length; i++) {
     //console.log(array[i]);
     if (i == 0) {
@@ -83,7 +133,35 @@ function draw() {
 
   let newHead = { x: snakeX, y: snakeY };
 
-  snake.pop();
+  //console.log(snake[0].x + " S " + snake[0].y);
+  //console.log(myFruit.x + " F " + myFruit.y);
+
+  //穿牆
+  //更新位置前，穿牆邏輯避免撞壁
+  let checkSnakeX = snake[0].x;
+  let checkSnakeY = snake[0].y;
+  if (checkSnakeX >= canvas.width) {
+    checkSnakeX = 0;
+  }
+  if (checkSnakeX < 0) {
+    checkSnakeX = canvas.width - unit;
+  }
+  if (checkSnakeY > 0) {
+    checkSnakeY = -canvas.height + unit;
+  }
+  if (checkSnakeY <= -canvas.height) {
+    checkSnakeY = 0;
+  }
+
+  //是否吃到果實，決定pop
+  if (checkSnakeX == myFruit.x && -checkSnakeY == myFruit.y) {
+    //console.log("吃到了");
+
+    myFruit.pickALocation();
+  } else {
+    snake.pop();
+  }
+
   snake.unshift(newHead);
 }
 
