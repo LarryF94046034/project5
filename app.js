@@ -8,10 +8,13 @@ const column = canvas.width / unit; //~~
 
 //snake
 let snake = [];
-snake[0] = { x: 80, y: 0 };
-snake[1] = { x: 60, y: 0 };
-snake[2] = { x: 40, y: 0 };
-snake[3] = { x: 20, y: 0 };
+
+function createSnake() {
+  snake[0] = { x: 80, y: 0 };
+  snake[1] = { x: 60, y: 0 };
+  snake[2] = { x: 40, y: 0 };
+  snake[3] = { x: 20, y: 0 };
+}
 
 //fruit
 class Fruit {
@@ -56,6 +59,9 @@ class Fruit {
   }
 }
 
+//生成snake
+createSnake();
+
 //生成fruit
 let myFruit = new Fruit();
 
@@ -76,10 +82,21 @@ function changeDirection(e) {
     direction = "Down";
   }
   //console.log(direction);
-  //window.removeEventListener("keydown", changeDirection);
+
+  window.removeEventListener("keydown", changeDirection);
 }
 
 function draw() {
+  //判斷蛇咬到自己
+  for (let i = 1; i < snake.length; i++) {
+    //console.log(array[i]);
+    if (snake[i].x == snake[0].x && snake[i].y == snake[0].y) {
+      clearInterval(myGame);
+      alert("遊戲結束");
+      return;
+    }
+  }
+
   //初始更新全黑
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -156,13 +173,14 @@ function draw() {
   //是否吃到果實，決定pop
   if (checkSnakeX == myFruit.x && -checkSnakeY == myFruit.y) {
     //console.log("吃到了");
-
     myFruit.pickALocation();
   } else {
     snake.pop();
   }
 
   snake.unshift(newHead);
+
+  window.addEventListener("keydown", changeDirection);
 }
 
 let myGame = setInterval(draw, 100);
