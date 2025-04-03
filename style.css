@@ -20,7 +20,7 @@ body {
 }
 
 #myScore {
-  margin-top: 1rem;
+  margin-top: 0.25rem;
 }
 
 #myScore,
@@ -35,5 +35,7 @@ body {
   background-color: yellow;
   font-size: 1.15rem;
   display: block;
-  margin-top: 15px;
+  width: 10rem;
+  height: 2rem;
+  margin-top: 2px;
 }

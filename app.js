@@ -9,6 +9,33 @@ const column = canvas.width / unit; //~~
 //snake
 let snake = [];
 
+//score
+let score = 0;
+let highestScore;
+
+loadHighestScore();
+refreshScore();
+
+function refreshScore() {
+  document.getElementById("myScore").innerHTML = "遊戲分數" + score;
+  document.getElementById("myScore2").innerHTML = "最高分數" + highestScore;
+}
+
+function loadHighestScore() {
+  if (localStorage.getItem("highestScore") == null) {
+    highestScore = 0;
+  } else {
+    highestScore = Number(localStorage.getItem("highestScore"));
+  }
+}
+
+function setHighestScore(score) {
+  if (score > highestScore) {
+    localStorage.setItem("highestScore", score);
+    highestScore = score;
+  }
+}
+
 function createSnake() {
   snake[0] = { x: 80, y: 0 };
   snake[1] = { x: 60, y: 0 };
@@ -174,6 +201,9 @@ function draw() {
   if (checkSnakeX == myFruit.x && -checkSnakeY == myFruit.y) {
     //console.log("吃到了");
     myFruit.pickALocation();
+    score++;
+    setHighestScore(score);
+    refreshScore();
   } else {
     snake.pop();
   }
